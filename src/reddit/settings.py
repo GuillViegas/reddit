@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'engine.apps.EngineConfig',
     'post.apps.PostConfig',
+    'ecosystem.apps.EcosystemConfig',
 ]
 
 MIDDLEWARE = [

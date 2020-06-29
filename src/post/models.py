@@ -10,6 +10,7 @@ class Post(models.Model):
     author = models.ForeignKey('post.RedditUser', on_delete=models.SET_NULL, null=True)
     score = models.PositiveIntegerField()
     num_comments = models.PositiveIntegerField()
+    num_writers = models.PositiveIntegerField()
     created_at = models.DateTimeField()
 
 
@@ -27,9 +28,9 @@ class RedditUser(models.Model):
 
 
 class SubReddit(models.Model):
-    # id = 
+    # id =
     # name = models.CharField(max_length=100, blank=True, null=True)
-    # description = 
-    # num_subscribers = 
-    # created_at = 
+    # description =
+    # num_subscribers =
+    # created_at =
     pass
