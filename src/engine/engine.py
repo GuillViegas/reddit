@@ -7,8 +7,11 @@ class SearchEngine:
     __rd_socket = None
     __ps_api = None
 
-    def __init__(self, user_agent, use_praw=False):
-        rd_credential = RedditCredential.objects.get(user_agent=user_agent)
+    def __init__(self, user_agent=False, use_praw=False):
+        rd_credential = (
+            RedditCredential.objects.get(user_agent=user_agent) if user_agent else RedditCredential.objects.first()
+        )
+
         self.__rd_socket = Reddit(
             client_id=rd_credential.client_id,
             client_secret=rd_credential.client_secret,
@@ -25,5 +28,13 @@ class SearchEngine:
         )
         rd_credential.save()
 
-    def search_by_num_comments():
-        pass
+    def most_commented_post(subreddit, after=None, before=None, limit=10):
+        return self.__ps_api.search_submission(
+            after=after,
+            before=before,
+            subreddit=subreddit,
+            sort_type='num_comments',
+            limit=limit
+        )
+
+
