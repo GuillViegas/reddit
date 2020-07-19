@@ -29,12 +29,18 @@ class SearchEngine:
         rd_credential.save()
 
     def most_commented_post(subreddit, after=None, before=None, limit=10):
-        return self.__ps_api.search_submission(
-            after=after,
-            before=before,
+        return self.__ps_api.search_submissions(
+            after=datetime.strptime(after, "%d-%m-%Y"),
+            before=datetime.strptime(before, "%d-%m-%Y"),
             subreddit=subreddit,
             sort_type='num_comments',
             limit=limit
         )
 
+    def retrive_post_comments(post_id):
+        return self.__ps_api.search_comments(
 
+        )
+
+    def retrive_author_posts(author):
+        pass
