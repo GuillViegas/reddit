@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from praw import Reddit
 from psaw import PushshiftAPI
+
 from engine.models import RedditCredential
 
 class SearchEngine:
@@ -28,19 +31,23 @@ class SearchEngine:
         )
         rd_credential.save()
 
-    def most_commented_post(subreddit, after=None, before=None, limit=10):
-        return self.__ps_api.search_submissions(
-            after=datetime.strptime(after, "%d-%m-%Y"),
-            before=datetime.strptime(before, "%d-%m-%Y"),
+    def most_commented_post(self, subreddit, before=None, after=None, limit=10):
+        return list(self.__ps_api.search_submissions(
+            before=datetime.strptime(before, "%d-%m-%Y") if before else None,
+            after=datetime.strptime(after, "%d-%m-%Y") if after else None,
             subreddit=subreddit,
             sort_type='num_comments',
             limit=limit
-        )
+        ))
 
-    def retrive_post_comments(post_id):
-        return self.__ps_api.search_comments(
+    def retrive_post_comments(self, post_id, before=None, after=None):
+        return list(self.__ps_api.search_comments(
+            link_id=post_id
+        ))
 
-        )
-
-    def retrive_author_posts(author):
-        pass
+    def retrive_author_posts(self, author, before=None, after=None):
+        return list(self.__ps_api.search_comments(
+            author=author,
+            before=datetime.strptime(before, "%d-%m-%Y") if before else None,
+            after=datetime.strptime(after, "%d-%m-%Y") if after else None
+        ))
