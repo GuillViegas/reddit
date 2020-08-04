@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django_extensions',
 
     'engine.apps.EngineConfig',
-    'post.apps.PostConfig',
+    'submission.apps.SubmissionConfig',
+    'ecosystem.apps.EcosystemConfig',
 ]
 
 MIDDLEWARE = [
