@@ -40,9 +40,9 @@ class SearchEngine:
             limit=limit
         ))
 
-    def retrive_post_comments(self, post_id, before=None, after=None):
+    def retrive_submission_comments(self, submission_id, before=None, after=None):
         return list(self.__ps_api.search_comments(
-            link_id=post_id
+            link_id=submission_id
         ))
 
     def retrive_author_posts(self, author, before=None, after=None):
