@@ -31,7 +31,7 @@ class SearchEngine:
         )
         rd_credential.save()
 
-    def most_commented_post(self, subreddit, before=None, after=None, limit=10):
+    def most_commented_submissions(self, subreddit, before=None, after=None, limit=10):
         return list(self.__ps_api.search_submissions(
             before=datetime.strptime(before, "%d-%m-%Y") if before else None,
             after=datetime.strptime(after, "%d-%m-%Y") if after else None,
@@ -51,3 +51,13 @@ class SearchEngine:
             before=datetime.strptime(before, "%d-%m-%Y") if before else None,
             after=datetime.strptime(after, "%d-%m-%Y") if after else None
         ))
+
+    def redditor_info(self, redditor):
+        redditor = self.__rd_socket.redditor(redditor)
+
+        return {
+            'name': redditor.name,
+            'submissions_karma': redditor.link_karma,
+            'comments_karma': redditor.comment_karma,
+            'created_at': datetime.utcfromtimestamp(redditor.created_utc)
+        }
