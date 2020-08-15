@@ -12,6 +12,7 @@ class Submission(models.Model):
     num_comments = models.PositiveIntegerField()
     num_writers = models.PositiveIntegerField()
     created_at = models.DateTimeField()
+    last_update = models.DateTimeField(auto_now=True)
 
 
 class Comment(models.Model):
@@ -21,16 +22,22 @@ class Comment(models.Model):
     created_at = models.DateTimeField()
     submission = models.ForeignKey("submission.Submission", null=True, on_delete=models.CASCADE)
     parent = models.ForeignKey("submission.Comment", null=True, on_delete=models.CASCADE)
+    last_update = models.DateTimeField(auto_now=True)
 
 
 class RedditUser(models.Model):
-    pass
+    name = models.CharField(max_length=100)
+    submissions_karma = models.PositiveIntegerField(default=0)
+    comments_karma = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField()
+    last_update = models.DateTimeField(auto_now=True)
 
 
 class SubReddit(models.Model):
-    # id =
-    # name = models.CharField(max_length=100, blank=True, null=True)
-    # description =
-    # num_subscribers =
-    # created_at =
-    pass
+    id = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=5000)
+    short_description = models.CharField(max_length=500)
+    num_subscribers = models.PositiveIntegerField()
+    created_at = models.DateTimeField()
+    last_update = models.DateTimeField(auto_now=True)
