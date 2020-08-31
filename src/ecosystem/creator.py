@@ -7,7 +7,7 @@ class Ecosystem:
     def __init__(self, search_engine):
         self.__search_engine = search_engine
 
-    def createEcosystem(self, submission_id=None, max_interactions=None):
+    def createEcosystem(self, submission_id=None, seed_params=None, max_interactions=None):
 
         try:
             submission = Submission.objects.get(submission_id)
@@ -17,9 +17,9 @@ class Ecosystem:
 
             if not submission:
                 submission = (self.__search_engine.most_commented_submissions(
-                    subreddit=subrredit,
-                    before=before,
-                    after=after,
+                    subreddit=seed_params.get('subrredit'),
+                    before=seed_params.get('before'),
+                    after=seed_params.get('after'),
                     limit=1) or [None])[0]
 
         seed = submission
