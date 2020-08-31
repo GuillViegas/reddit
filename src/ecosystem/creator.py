@@ -1,17 +1,33 @@
-from post.models import Post
+from submission.models import Submission
 
+class Ecosystem:
 
-def createEcosystem(post_id, max_interactions=None):
-    seed = Post.objects.get(id=post_id)
-    comments = []
-    posts = [seed]
-    users = [seed.author]
-    interactions = 0
+    __search_engine = None
 
-    while(True):
+    def __init__(self, search_engine):
+        self.__search_engine = search_engine
 
+    def createEcosystem(self, submission_id=None, max_interactions=None):
 
-        instections += 1
+        try:
+            submission = Submission.objects.get(submission_id)
+        except Submission.DoesNotExist:
+            if submission_id:
+                submission = self.__search_engine.retrive_submission_by_id(submission_id)
 
+            if not submission:
+                submission = (self.__search_engine.most_commented_submissions(
+                    subreddit=subrredit,
+                    before=before,
+                    after=after,
+                    limit=1) or [None])[0]
 
-    pass
+        seed = submission
+        comments = []
+        submissions = [seed]
+        users = [seed.author]
+        interactions = 0
+
+        while(interactions < max_interactions if max_interactions else True):
+            comments = self.__search_engine.retrive_submission_comments(seed.id)
+            interactions += 1

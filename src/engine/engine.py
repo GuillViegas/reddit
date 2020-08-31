@@ -40,14 +40,19 @@ class SearchEngine:
             limit=limit
         ))
 
+    def retrive_submission_by_id(self, submission_id):
+        return (list(self.__ps_api.search_submissions(
+            ids=[submission_id]
+        )) or [None])[0]
+
     def retrive_submission_comments(self, submission_id, before=None, after=None):
         return list(self.__ps_api.search_comments(
             link_id=submission_id
         ))
 
-    def retrive_author_posts(self, author, before=None, after=None):
+    def retrive_redditor_submissions(self, redditor, before=None, after=None):
         return list(self.__ps_api.search_comments(
-            author=author,
+            author=redditor,
             before=datetime.strptime(before, "%d-%m-%Y") if before else None,
             after=datetime.strptime(after, "%d-%m-%Y") if after else None
         ))
