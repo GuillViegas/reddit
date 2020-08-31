@@ -13,7 +13,7 @@ class Submission(models.Model):
     num_comments = models.PositiveIntegerField(default=0)
     num_writers = models.PositiveIntegerField()
     created_at = models.DateTimeField()
-    retrive_on = models.DateTimeField()
+    retrieved_on = models.DateTimeField()
     extra = JSONField(default=dict, null=True, blank=True)
 
 
