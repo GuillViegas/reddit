@@ -31,7 +31,7 @@ class SearchEngine:
         )
         rd_credential.save()
 
-    def most_commented_submissions(self, subreddit, before=None, after=None, limit=10):
+    def most_commented_submissions(self, subreddit=None, before=None, after=None, limit=10):
         return list(self.__ps_api.search_submissions(
             before=datetime.strptime(before, "%d-%m-%Y") if before else None,
             after=datetime.strptime(after, "%d-%m-%Y") if after else None,
