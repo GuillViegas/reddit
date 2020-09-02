@@ -66,3 +66,9 @@ class SearchEngine:
             'comments_karma': redditor.comment_karma,
             'created_at': datetime.utcfromtimestamp(redditor.created_utc)
         }
+
+    def submission_score(self, submission_id):
+        return self.__rd_socket.submission(submission_id).score()
+
+    def submission_writters(self, submission_id):
+        return len(set(comment.author for comment in self.__ps_api.search_comments(link_id=[submission_id])))
