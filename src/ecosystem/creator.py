@@ -1,16 +1,18 @@
 from submission.models import Submission
 from datetime import datetime
+from engine.engine import SearchEngine
 
 class Ecosystem:
 
     __search_engine = None
     __seed = None
+    __subreddit = None
     __comments = None
     __submissions = None
     __redditors = None
 
-    def __init__(self, search_engine):
-        self.__search_engine = search_engine
+    def __init__(self, search_engine=None):
+        self.__search_engine = search_engine or SearchEngine()
 
     def __filter_comments(self, comments, score=0):
         self.__comments.extend([
@@ -18,11 +20,15 @@ class Ecosystem:
             if self.__search_engine.submission_score(comment.id) > score])
 
     def __filter_redditors(self, comments, popularity=0):
-        self.__redditors.extend(filter(
+        redditors = filter(
             lambda author: (author['submissions_karma'] + author['submissions_karma']) > score,
-            [expression[self.__search_engine.redditor_info(comment.author) for comment in comments]))
+            [self.__search_engine.redditor_info(comment.author) for comment in comments])
 
-    def createEcosystem(
+        self.__redditors.extend(redditors)
+
+        return redditors
+
+    def create(
         self,
         submission_id=None,
         seed_params={
@@ -43,10 +49,13 @@ class Ecosystem:
         },
         max_interactions=None,
         save=True):
+        import time
+        t = time.process_time()
 
+        submission = None
         if submission_id:
             try:
-                submission = Submission.objects.get(submission_id)
+                submission = Submission.objects.get(id=submission_id)
             except Submission.DoesNotExist:
                 submission = self.__search_engine.retrive_submission_by_id(submission_id)
 
@@ -65,23 +74,32 @@ class Ecosystem:
         #     url=submission.url,
         #     subreddit=submission.subreddit,
         #     author=submission.author,
-        #     score=__search_engine.submission_score(submission.id),
+        #     score=self.__search_engine.submission_score(submission.id),
         #     num_comments=submission.num_comments,
-        #     num_writers=__search_engine.submission_writters(submission_id),
+        #     num_writers=len(self.__search_engine.submission_writters(submission_id)),
         #     created_at=datetime.fromtimestamp(submission.created_utc),
         #     retrived_on=datetime.fromtimestamp(submission.retrieved_on)
         # )
 
         self.__seed = submission
+
+        # if submission belongs to any subreddit
+        self.__subreddit = self.__seed.subreddit if self.__seed.subreddit[:2] != 'u_' else None
         self.__comments = []
-        self.__submissions = [seed]
+        self.__submissions = [self.__seed]
         self.__redditor = [self.__seed.author]
         interactions = 0
 
-        # to save multiple instances bulk_create
+        # retrive comments from the seed
+        print(self.__seed.num_comments)
+        print(time.process_time() - t)
+        comments = self.__search_engine.retrive_submission_comments(self.__submissions[0].id)
+        print(time.process_time() - t)
+        breakpoint()
         while(interactions < max_interactions if max_interactions else True):
-            comments = self.__search_engine.retrive_submission_comments(seed.id)
+            print(time.process_time() - t)
+            breakpoint()
             self.__filter_comments(comments, filters['comments']['score'])
-            self.__filter_redditors(comments, filters['reddituser']['popularity']
+            self.__filter_redditors(comments, filters['reddituser']['popularity'])
 
             interactions += 1

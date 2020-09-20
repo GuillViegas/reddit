@@ -47,11 +47,13 @@ class SearchEngine:
 
     def retrive_submission_comments(self, submission_id, before=None, after=None):
         return list(self.__ps_api.search_comments(
-            link_id=submission_id
+            link_id=submission_id,
+            after=datetime.strptime(after, "%d-%m-%Y") if after else None,
+            before=datetime.strptime(before, "%d-%m-%Y") if before else None,
         ))
 
     def retrive_redditor_submissions(self, redditor, before=None, after=None):
-        return list(self.__ps_api.search_comments(
+        return list(self.__ps_api.search_submissions(
             author=redditor,
             before=datetime.strptime(before, "%d-%m-%Y") if before else None,
             after=datetime.strptime(after, "%d-%m-%Y") if after else None
@@ -71,4 +73,4 @@ class SearchEngine:
         return self.__rd_socket.submission(submission_id).score()
 
     def submission_writters(self, submission_id):
-        return len(set(comment.author for comment in self.__ps_api.search_comments(link_id=[submission_id])))
+        return set(comment.author for comment in self.__ps_api.search_comments(link_id=[submission_id]))
