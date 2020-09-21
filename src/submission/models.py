@@ -16,6 +16,20 @@ class Submission(models.Model):
     retrieved_on = models.DateTimeField()
     extra = JSONField(default=dict, null=True, blank=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'body': self.body,
+            'url': self.url,
+            'subreddit': self.subreddit,
+            'author': self.author,
+            'score': self.score,
+            'num_comments': self.num_comments,
+            'created_at': self.created_at,
+            'retrived_on': self.retrive_on
+        }
+
 
 class Comment(models.Model):
     id = models.CharField(primary_key=True, max_length=7)
