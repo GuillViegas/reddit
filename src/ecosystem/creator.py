@@ -54,7 +54,7 @@ class Ecosystem:
         t = time.process_time()
 
         if seed_params.get('seed_id'):
-            self.__seed = Seed.objects.get('seed_id')
+            self.__seed = Seed.objects.get(id='seed_id')
             self.__redditors = self.__seed.redditors
             self.__r_idx = self.__seed.r_idx
             self.__comments = self.__seed.comments
