@@ -54,7 +54,7 @@ class Ecosystem:
         t = time.process_time()
 
         if seed_params.get('seed_id'):
-            self.__seed = Seed.objects.get(id='seed_id')
+            self.__seed = Seed.objects.get(id=seed_params.get('seed_id'))
             self.__redditors = self.__seed.redditors
             self.__r_idx = self.__seed.r_idx
             self.__comments = self.__seed.comments
@@ -110,8 +110,8 @@ class Ecosystem:
             self.__redditors = [redditor.name]
             print(redditor.name)
 
-            attempts = 0
-            errors = []
+        attempts = 0
+        errors = []
 
         while self.__r_idx < len(self.__redditors):
             print(len(self.__redditors))
