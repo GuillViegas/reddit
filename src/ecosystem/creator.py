@@ -60,6 +60,7 @@ class Ecosystem:
             self.__comments = self.__seed.comments
             self.__submissions = self.__seed.submissions
             self.__subreddit = set(self.__seed.subreddits)
+            domain = self.__seed.domain
 
         else:
             submission = None
@@ -98,7 +99,7 @@ class Ecosystem:
                     submission.save()
 
             submission_seed = submission.to_dict()
-            seed = Seed(seed=submission)
+            seed = Seed(seed=submission, domain=domain)
             seed.save()
             self.__seed = seed
 

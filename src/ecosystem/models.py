@@ -10,3 +10,4 @@ class Seed(models.Model):
     comments = ArrayField(models.CharField(max_length=7), null=True)
     submissions = ArrayField(models.CharField(max_length=7), null=True)
     r_idx = models.PositiveIntegerField(default=0)
+    domain = ArrayField(models.CharField(max_length=100), null=True)
