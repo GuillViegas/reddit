@@ -4,3 +4,5 @@ django-extensions==2.2.9
 praw==7.0.0
 wheel==0.34.2
 psaw==0.0.12
+networkx==2.5
+matplotlib==3.3.2
