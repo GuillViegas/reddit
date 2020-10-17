@@ -172,3 +172,34 @@ class SearchEngine:
             'created_at': datetime.utcfromtimestamp(subreddit.created_utc),
             'last_update': datetime.now()
         }
+
+    def update_comments_score(self, comments_id):
+
+        num_comments = len(comments_id)
+        for i, comment_id in enumerate(comments_id):
+            try:
+                comment = Comment.objects.get(id=comment_id)
+                score = self.__rd_socket.comment(id=comment_id).score
+                comment.score = int(score)
+                comment.save()
+            except Exception as ex:
+                pass
+
+            if i%500 == 0:
+                print(f'{i+1}/{num_comments}')
+
+        print(f'{i+1}/{num_comments}')
+
+    def update_submissions_score(self, submissions_id):
+
+        num_submissions = len(submissions_id)
+        for submission_id in submissions_id:
+            submission = Submission.objects.get(id=submission_id)
+            score = self.__rd_socket.submission(id=submission_id).score
+            submission.score = score
+            submission.save()
+
+            if i%500 == 0:
+                print(f'{i+1}/{num_submissions}')
+
+        print(f'{i+1}/{num_submissions}')
