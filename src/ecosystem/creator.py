@@ -1,3 +1,5 @@
+import networkx as nx
+
 from submission.models import (
     Comment,
     RedditUser,
@@ -18,9 +20,12 @@ class Ecosystem:
     __submissions = []
     __redditors = []
     __r_idx = 0
+    __graph = None
 
-    def __init__(self, search_engine=None):
+    def __init__(self, seed_id=None, search_engine=None):
         self.__search_engine = search_engine or SearchEngine()
+
+        if seed_id: self.__seed = Seed.objects.get(id=seed_id)
 
     # def __filter_comments(self, comments, score=0):
     #     self.__comments.extend([
@@ -47,14 +52,13 @@ class Ecosystem:
         },
         domain=None,
         max_attempts=3,
-        max_interactions=None,
-        save=True):
+        max_interactions=None):
 
         import time
         t = time.process_time()
 
-        if seed_params.get('seed_id'):
-            self.__seed = Seed.objects.get(id=seed_params.get('seed_id'))
+        if self.__seed or seed_params.get('seed_id'):
+            self.__seed = self.__seed or Seed.objects.get(id=seed_params.get('seed_id'))
             self.__redditors = self.__seed.redditors
             self.__r_idx = self.__seed.r_idx
             self.__comments = self.__seed.comments
@@ -184,12 +188,30 @@ class Ecosystem:
 
             self.__redditors += list({comment['author'].name for comment in comments} - set(self.__redditors))
 
-            self.__r_idx += 1
-
-            self.__seed.r_idx = self.__r_idx
             self.__seed.submissions = self.__submissions
             self.__seed.comments = self.__comments
             self.__seed.redditors = self.__redditors
             self.__seed.subreddits = list(self.__subreddit)
+            self.__seed.r_idx = self.__r_idx
             self.__seed.save()
+
+            if max_interactions and self.__r_idx == max_interactions - 1: break
+
+            self.__r_idx += 1
+
+    def generate_graph():
+
+        authors = list({author for author in Submission.objects.value_list('author_id', flat=True)})
+        comments = Comments.objects.filter(author__in=authors)
+        comments = [comment for comment in comments if comment.author.name != comment.submission.author.name]
+
+        graph = nx.DiGraph()
+        graph.add_nodes_from(authors)
+        edges = {}
+
+        for comment in comments:
+            edges[(comment.author.name, comment.submission.author.name)] = (
+                edges.setdefault((comment.author.name, comment.submission.author.name), 0) + 1)
+
+        graph.add_weighted_edges_from([(edge[0], edge[1], edges[egde]) for edge in edges])
 
