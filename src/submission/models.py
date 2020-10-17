@@ -35,7 +35,7 @@ class Comment(models.Model):
     id = models.CharField(primary_key=True, max_length=7)
     author = models.ForeignKey('submission.RedditUser', on_delete=models.SET_NULL, null=True)
     body = models.CharField(max_length=40000, blank=True, null=True)
-    score = models.PositiveIntegerField(default=0)
+    score = models.IntegerField(default=0)
     created_at = models.DateTimeField()
     submission = models.ForeignKey("submission.Submission", null=True, on_delete=models.CASCADE)
     parent = models.CharField(max_length=7, null=True)
