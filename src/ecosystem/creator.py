@@ -198,20 +198,3 @@ class Ecosystem:
             if max_interactions and self.__r_idx == max_interactions - 1: break
 
             self.__r_idx += 1
-
-    def generate_graph():
-
-        authors = list({author for author in Submission.objects.value_list('author_id', flat=True)})
-        comments = Comments.objects.filter(author__in=authors)
-        comments = [comment for comment in comments if comment.author.name != comment.submission.author.name]
-
-        graph = nx.DiGraph()
-        graph.add_nodes_from(authors)
-        edges = {}
-
-        for comment in comments:
-            edges[(comment.author.name, comment.submission.author.name)] = (
-                edges.setdefault((comment.author.name, comment.submission.author.name), 0) + 1)
-
-        graph.add_weighted_edges_from([(edge[0], edge[1], edges[egde]) for edge in edges])
-
