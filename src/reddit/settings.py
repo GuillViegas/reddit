@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'reddit.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'reddit_colab',
+        'NAME': 'reddit_mentaldisorders',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
