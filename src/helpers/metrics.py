@@ -2,9 +2,7 @@ from datetime import datetime
 from helpers.database import generic_execute
 from submission.models import Comment, Submission
 import networkx as nx
-import math
 import sql
-
 
 
 def metric_by_month(report, after, before, key='count', simple=True):
@@ -32,6 +30,7 @@ def metric_by_month(report, after, before, key='count', simple=True):
 
     return metrics
 
+
 def generate_digraph(after=None, before=None):
     authors = list({author for author in Submission.objects.filter(
         id__in=[comment.submission_id for comment in Comment.objects.all()]
@@ -54,6 +53,7 @@ def generate_digraph(after=None, before=None):
     graph.remove_nodes_from([n for n in nx.isolates(graph)])
     return graph
 
+
 def generate_graph(after=None, before=None):
     submissions = Submission.objects.filter(id__in=[comment.submission_id for comment in Comment.objects.all()])
 
@@ -61,7 +61,7 @@ def generate_graph(after=None, before=None):
     authors = []
     for submission in submissions:
 
-        if submission.create_at >= after and submission.create_at <= before:
+        if submission.created_at.replace(tzinfo=None) >= after and submission.created_at.replace(tzinfo=None) <= before:
             authors.append(submission.author.name)
 
         authors.extend([
@@ -78,7 +78,6 @@ def generate_graph(after=None, before=None):
 def generate_graph_by_period(graph_type, after, before, period):
     month = after.month
     year = after.year
-    metrics = []
     graphs = []
 
     while year < before.year or month < before.month:
@@ -95,7 +94,6 @@ def generate_graph_by_period(graph_type, after, before, period):
             graph = generate_digraph(
                 after=datetime(a_year, a_month, 1, 0, 0, 0),
                 before=datetime(b_year, b_month, 1, 0, 0, 0))
-
 
         else:
             graph = generate_graph(
