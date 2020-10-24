@@ -110,7 +110,6 @@ class Ecosystem:
             # if submission belongs to any subreddit
             self.__subreddit.add(submission_seed['subreddit'] if submission_seed['subreddit'][:2] != 'u_' else None)
 
-
             redditor = submission_seed['author']
             self.__redditors = [redditor.name]
             print(redditor.name)

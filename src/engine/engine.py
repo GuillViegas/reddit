@@ -2,7 +2,7 @@ from datetime import datetime
 
 from engine.models import RedditCredential
 
-from submission.models import Submission, Comment
+from submission.models import Submission, Comment, RedditUser
 
 from praw import Reddit
 from psaw import PushshiftAPI
@@ -80,10 +80,10 @@ class SearchEngine:
             comments = [
                 {
                     'id': comment.id,
-                    'author': comment.author,
+                    'author_id': comment.author,
                     'body': comment.body,
                     'created_at': datetime.utcfromtimestamp(comment.created_utc),
-                    'submission': comment.link_id.split('_')[1],
+                    'submission_id': comment.link_id.split('_')[1],
                     'parent': comment.parent_id.split('_')[1],
                     'retrieved_on': datetime.utcfromtimestamp(comment.retrieved_on)
                 }
@@ -97,11 +97,11 @@ class SearchEngine:
             comments = [
                 {
                     'id': comment.id,
-                    'author': comment.author.name if comment.author else None,
+                    'author_id': comment.author.name if comment.author else None,
                     'body': comment.body,
                     'score': comment.score,
                     'created_at': datetime.utcfromtimestamp(comment.created_utc),
-                    'submission': comment._submission.id,
+                    'submission_id': comment._submission.id,
                     'parent': comment.parent_id.split('_')[1],
                     'retrieved_on': datetime.now()
                 }
@@ -155,10 +155,10 @@ class SearchEngine:
         redditor = self.__rd_socket.redditor(redditor)
 
         return {
-            'name': redditor.name,
-            'submissions_karma': redditor.link_karma,
-            'comments_karma': redditor.comment_karma,
-            'created_at': datetime.utcfromtimestamp(redditor.created_utc)
+            'name': getattr(redditor, 'name'),
+            'submissions_karma': getattr(redditor, 'link_karma'),
+            'comments_karma': getattr(redditor, 'comment_karma'),
+            'created_at': datetime.utcfromtimestamp(getattr(redditor, 'created_utc'))
         }
 
     def subreddit_info(self, subreddit):
@@ -183,9 +183,10 @@ class SearchEngine:
                 comment.score = int(score)
                 comment.save()
             except Exception as ex:
+                print(ex)
                 pass
 
-            if i%500 == 0:
+            if i % 500 == 0:
                 print(f'{i+1}/{num_comments}')
 
         print(f'{i+1}/{num_comments}')
@@ -193,13 +194,40 @@ class SearchEngine:
     def update_submissions_score(self, submissions_id):
 
         num_submissions = len(submissions_id)
-        for submission_id in submissions_id:
+        for i, submission_id in enumerate(submissions_id):
             submission = Submission.objects.get(id=submission_id)
             score = self.__rd_socket.submission(id=submission_id).score
             submission.score = score
             submission.save()
 
-            if i%500 == 0:
+            if i % 500 == 0:
                 print(f'{i+1}/{num_submissions}')
 
         print(f'{i+1}/{num_submissions}')
+
+    def update_submissions_comments(self, submissions_ids=None):
+        comments_ids = {comment.id for comment in Comment.objects.all()}
+        authors_names = {author.name for author in RedditUser.objects.all()}
+        submissions = Submission.objects.filter(id__in=submissions_ids) if submissions_ids else Submission.objects.all()
+
+        for i, submission in enumerate(submissions):
+            print(f'{i}/{len(submissions)} - {submission.id}')
+            comments = [
+                comment for comment in self.retrive_submission_comments(submission.id)
+                if comment['id'] not in comments_ids]
+
+            authors = [
+                comment['author_id'] for comment in comments
+                if comment['author_id'] not in authors_names]
+
+            authors_bulk = []
+            for author in authors:
+                try:
+                    authors_bulk.append(RedditUser(**self.redditor_info(author)))
+                except Exception:
+                    authors_bulk.append(RedditUser(name=author))
+
+            RedditUser.objects.bulk_create(authors_bulk, ignore_conflicts=True)
+
+            comments = [Comment(**comment) for comment in comments]
+            Comment.objects.bulk_create(comments, ignore_conflicts=True)

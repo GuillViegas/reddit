@@ -1,6 +1,7 @@
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
+
 # Create your models here.
 class Submission(models.Model):
     id = models.CharField(primary_key=True, max_length=6)
@@ -9,7 +10,7 @@ class Submission(models.Model):
     url = models.CharField(max_length=350, blank=True, null=True)
     subreddit = models.ForeignKey('submission.SubReddit', on_delete=models.PROTECT)
     author = models.ForeignKey('submission.RedditUser', on_delete=models.PROTECT, null=True)
-    score = models.PositiveIntegerField(default=0)
+    score = models.IntegerField(default=0)
     num_comments = models.PositiveIntegerField(default=0)
     num_writers = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField()
@@ -45,9 +46,9 @@ class Comment(models.Model):
 
 class RedditUser(models.Model):
     name = models.CharField(max_length=100, primary_key=True)
-    submissions_karma = models.PositiveIntegerField(default=0)
-    comments_karma = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField()
+    submissions_karma = models.IntegerField(default=0)
+    comments_karma = models.IntegerField(default=0)
+    created_at = models.DateTimeField(null=True)
     last_update = models.DateTimeField(auto_now=True)
 
 

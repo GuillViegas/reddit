@@ -71,7 +71,7 @@ def generate_graph(after=None, before=None):
         submission_graph = nx.complete_graph(authors)
         graph = nx.compose(graph, submission_graph)
 
-    graph.remove_node_from([n for n in nx.isolates(graph)])
+    graph.remove_nodes_from([n for n in nx.isolates(graph)])
     return graph
 
 
