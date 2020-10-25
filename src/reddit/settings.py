@@ -86,9 +86,27 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': 5432
-    }
+    },
+    'languages': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'reddit_languages',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': 5432
+    },
+    'mental_health': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'reddit_mentaldisorders',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': 5432
+    },
 }
 
+# default_database = environ.get('DJANGO_DATABASE', 'default')
+# DATABASES['default'] = DATABASES[default_database]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
